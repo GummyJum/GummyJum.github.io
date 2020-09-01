@@ -1,0 +1,6 @@
+add basic info to my page
+
+- mail address
+- hobbies
+- video games i played
+- intrests
