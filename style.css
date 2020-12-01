@@ -1,5 +1,16 @@
+@font-face {
+  font-family: text-font;
+  /* src: url(fonts/cafeandbrewery.ttf); */
+  src: url(fonts/VanillaExtractRegular.ttf);
+}
+@font-face {
+  font-family: title-font;
+  /* src: url(fonts/orange\ juice\ 2.0.ttf); */
+  src: url(fonts/VCR_OSD_MONO.ttf);
+}
+
 .topnav {
-  background-color: rgb(236, 213, 243);
+  background-color: rgb(87, 29, 105);
   overflow: hidden;
 }
 
@@ -8,24 +19,26 @@
 	/* background-color:#eec0cf; */
 	border:1px solid #575748;
   float: left;
-	color:#776a22;
+	color:#ffffff;
   text-align: center;
-  padding: 14px 16px;
+  padding: 4px;
   text-decoration: none;
   font-size: 200%;
   font-weight: bold;
+  font-family: title-font;
 }
 
 code {
   display: block;
-  background-color:#d6ccee;
+  background-color:#4f4e52;
+  font-size: 100%;
 }
 
 a {
 	display:inline-block;
 	cursor:pointer;
-	color:#776a22;
-	font-family:Arial;
+	color:#3ba5cf;
+	/* font-family:Arial; */
 	font-weight: bolder;
   text-decoration:none;  
 }
@@ -33,7 +46,6 @@ a {
 #content {  
   max-width: 800px;
   margin: auto;
-  font-weight: normal;
   font-size: 100%;
 }
 
@@ -45,8 +57,9 @@ a {
 }
 
 body {
-  font-weight: bold;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	/* background-color: rgb(168, 167, 167); */
-	/* color: rgb(21, 30, 43); */
+  font-weight: normal;
+  font-family: text-font; 
+  /* , "Helvetica Neue", Helvetica, Arial; */
+	background-color: rgb(15, 14, 14);
+	color: rgb(255, 255, 255);
 }

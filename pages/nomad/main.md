@@ -3,7 +3,7 @@
 
 *"one cloud to rule them all and in the darkness bind them"*
 
-## preface
+## Preface
 Nomad is an orchestration tool for deploying and managing applications. It has no dependencies and require almost no configuration making it the perfect tool for a rogue cloud for your underground projects.
 If you are a low tier engineer/researcher in an High-Tech company and find yourself in a shortage of computing power this is the post for you. 
 
@@ -23,7 +23,7 @@ Since using Linux for distributed computing has widespread documentation but man
 
 Nomad has two type of agents, server and a client. Where clients run tasks and the server is responsible for managing the cluster (both can be used as the cluster endpoint). 
 
-The following config files are for a single server setup and was tested for over 20 nodes. For better resilience one can use multiple nodes setup.
+The following config files are for a single server setup, for better resilience one can use multiple nodes setup.
 
 ```
 # server.conf
@@ -100,7 +100,7 @@ Nomad features like artifact stanza, resources stanza, and env stanza are extrem
 
 *The Nomad Spartan*
 
-## Sidenote: Why Nomad is excelent for Map-Reduce
+## Sidenote: Why Nomad is excellent for Map-Reduce
 Nomad versatile arsenal is also perfect for a Map-Reduce pipeline.
 
 A pipeline that perform an element wise operation on a Dataset followed by a summery operation is called a Map-Reduce pipeline. It is simple generic data-heavy pipeline template that I found repeating in many projects.
