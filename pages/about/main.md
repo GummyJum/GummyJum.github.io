@@ -15,4 +15,4 @@ I am an engineer with the following intrests (from oldest to newest):
 
 # 2020
 
-[Rogue Cloud With Nomad](pages/nomad/main.html)
+[Rogue Cloud With Nomad](?page=nomad)
