@@ -4,6 +4,7 @@
 This is a place for me to store current projects, repairing broken dreams and creating future noise.
 
 I am an engineer with the following intrests (from oldest to newest):
+
 - Video Games
 - Physics
 - Remote Sensing
