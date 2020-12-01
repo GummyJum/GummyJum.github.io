@@ -1,0 +1,81 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rogue Cloud with Nomad.md</title><style></style></head><body id="preview">
+<h1 class="code-line" data-line-start=0 data-line-end=1><a id="Rogue_Cloud_with Nomad_0"></a>Rogue Cloud with Nomad</h1>
+<p class="has-line-data" data-line-start="1" data-line-end="2"><img src="one_cloud_to_rule_them_all.png" alt="&amp;quot;one cloud to rule them all and in the darkness bind them&amp;quot;"></p>
+<p class="has-line-data" data-line-start="3" data-line-end="4"><em>“one cloud to rule them all and in the darkness bind them”</em></p>
+<h2 class="code-line" data-line-start=5 data-line-end=6><a id="preface_5"></a>preface</h2>
+<p class="has-line-data" data-line-start="6" data-line-end="8">Nomad is an orchestration tool for deploying and managing applications. It has no dependencies and require almost no configuration making it the perfect tool for a rogue cloud for your underground projects.<br>
+If you are a low tier engineer/researcher in an High-Tech company and find yourself in a shortage of computing power this is the post for you.</p>
+<p class="has-line-data" data-line-start="9" data-line-end="10">Putting your hands on shiny hardware can be a difficult task and sometimes you don’t want all the attention that is involved in the process. But what about the company’s old servers that on a busy day have CPU utilization rate of one percent? what about your colleagues workstations? Using Nomad you can revive those servers, conquer those workstations and untap the realms of high performance computing on foreign hardware.</p>
+<p class="has-line-data" data-line-start="11" data-line-end="12">Since using Linux for distributed computing has widespread documentation but many office environments are Windows based, this tutorial is mainly focused on Windows.</p>
+<h2 class="code-line" data-line-start=13 data-line-end=14><a id="Requirements_13"></a>Requirements</h2>
+<ol>
+<li class="has-line-data" data-line-start="15" data-line-end="16">Nomad single binary.</li>
+<li class="has-line-data" data-line-start="16" data-line-end="17">Rusty servers / workstations with remote access means.</li>
+<li class="has-line-data" data-line-start="17" data-line-end="19">Understanding that you are responsible for your own actions and the ideas presented here are for educational purpose only.</li>
+</ol>
+<p class="has-line-data" data-line-start="19" data-line-end="20"><img src="i_am_a_man_of_simple_things.jpeg" alt=""></p>
+<h2 class="code-line" data-line-start=21 data-line-end=22><a id="Configuring_and_Deploying_Nomad_21"></a>Configuring and Deploying Nomad</h2>
+<p class="has-line-data" data-line-start="23" data-line-end="24">Nomad has two type of agents, server and a client. Where clients run tasks and the server is responsible for managing the cluster (both can be used as the cluster endpoint).</p>
+<p class="has-line-data" data-line-start="25" data-line-end="26">The following config files are for a single server setup and was tested for over 20 nodes. For better resilience one can use multiple nodes setup.</p>
+<pre><code class="has-line-data" data-line-start="28" data-line-end="40"># server.conf
+data_dir  = &quot;C:/nomad&quot;
+server {
+  enabled          = true
+  bootstrap_expect = 1
+}
+plugin &quot;raw_exec&quot; {
+  config {
+    enabled = true
+  }
+}
+</code></pre>
+<pre><code class="has-line-data" data-line-start="42" data-line-end="56"># client.conf
+data_dir  = &quot;C:/nomad&quot;
+client {
+  enabled       = true
+  server_join {
+   retry_join = [ &quot;1.1.1.1&quot; ]
+  }
+}
+plugin &quot;raw_exec&quot; {
+  config {
+    enabled = true
+  }
+}
+</code></pre>
+<p class="has-line-data" data-line-start="57" data-line-end="58">Gather your list of hosts to hosts.txt</p>
+<pre><code class="has-line-data" data-line-start="60" data-line-end="64">hostname1
+hostname2
+...
+</code></pre>
+<p class="has-line-data" data-line-start="65" data-line-end="66">Assuming you have the same credentials to all of those hosts (Admin Password)</p>
+<p class="has-line-data" data-line-start="67" data-line-end="68">You can now share the nomad single Go binary and config files using the network. (I put them in a single directory and share using the windows 10 network sharing option, right click on folder &gt; Properties &gt; Sharing &gt; Share &gt; Share, thus it is now available to every host on the LAN via \myhost\nomadir)</p>
+<p class="has-line-data" data-line-start="69" data-line-end="70">After that initialize the nomad server on your workstation from the command line</p>
+<pre><code class="has-line-data" data-line-start="72" data-line-end="74">nomad agent -config server.conf
+</code></pre>
+<p class="has-line-data" data-line-start="75" data-line-end="76">And after a few seconds of waiting you can visit the beautiful Nomad UI on <a href="http://localhost:4646/ui">http://localhost:4646/ui</a>.</p>
+<p class="has-line-data" data-line-start="77" data-line-end="78">We are now ready to deploy Nomad to all the other hosts, using PAExec</p>
+<pre><code class="has-line-data" data-line-start="80" data-line-end="82">paexec @hosts.txt -u Admin -p Password -d \\myhost\nomadir\nomad agent -config \\myhost\nomadir\client.conf
+</code></pre>
+<p class="has-line-data" data-line-start="83" data-line-end="84">Or alternatively using SSH (for example via Ansible which has widespread documentation).</p>
+<p class="has-line-data" data-line-start="85" data-line-end="86">You can now wait and watch the army of nodes that are connecting to your Nomad cluster in the UI clients tab.</p>
+<h2 class="code-line" data-line-start=87 data-line-end=88><a id="RawExec_for_the_Nomad Ninja_87"></a>Raw-Exec for the Nomad Ninja</h2>
+<p class="has-line-data" data-line-start="88" data-line-end="89">To run docker image on remote workstation it is required that the remote station would have a docker driver, but although docker is common, I found it not common enough.</p>
+<p class="has-line-data" data-line-start="90" data-line-end="91">Assume that you have your binaries (or even your source) in a compact package you can run them via one of Nomads distinct features, the Raw-Exec driver.</p>
+<p class="has-line-data" data-line-start="92" data-line-end="93">The beauty of this is its simplicity, you can run virtually (as a figure of speech) on any environment without prior configuration as long as your project requirements are met (like in the good old days of the wild west of binaries).</p>
+<p class="has-line-data" data-line-start="94" data-line-end="95">Thus for zero exposure one can upload his binaries to the storage of his choice and run a workstation based stealth high performance computing cluster.</p>
+<p class="has-line-data" data-line-start="96" data-line-end="97">Nomad features like artifact stanza, resources stanza, and env stanza are extremely useful in those covert jobs and work smoothly (which is a big deal for a multi-platform native orchestrator).</p>
+<p class="has-line-data" data-line-start="98" data-line-end="99"><img src="spartan.jpg" alt=""></p>
+<p class="has-line-data" data-line-start="100" data-line-end="101"><em>The Nomad Spartan</em></p>
+<h2 class="code-line" data-line-start=102 data-line-end=103><a id="Sidenote_Why_Nomad_is_excelent_for_MapReduce_102"></a>Sidenote: Why Nomad is excelent for Map-Reduce</h2>
+<p class="has-line-data" data-line-start="103" data-line-end="104">Nomad versatile arsenal is also perfect for a Map-Reduce pipeline.</p>
+<p class="has-line-data" data-line-start="105" data-line-end="106">A pipeline that perform an element wise operation on a Dataset followed by a summery operation is called a Map-Reduce pipeline. It is simple generic data-heavy pipeline template that I found repeating in many projects.</p>
+<p class="has-line-data" data-line-start="107" data-line-end="108">Map-Reduce pipelines are common for data-science since generating an insight out a the haystack often requires some initial processing on the hay.</p>
+<p class="has-line-data" data-line-start="109" data-line-end="110">Training a machine learning model is many times a Map-Reduce pipeline since you have a set of elements that you want to download, sort, filter and finally dump to your model endpoint.</p>
+<p class="has-line-data" data-line-start="111" data-line-end="112">The Map operation can be done via Parametric job configuration and the reduce via service job that waits for all the Map operations to complete successfully and then performs the Reduce operation.</p>
+<p class="has-line-data" data-line-start="113" data-line-end="114">One can concatenate pipelines and create fairly intricate machine for no cost and with high visibility.</p>
+<h2 class="code-line" data-line-start=115 data-line-end=116><a id="Conclusion_115"></a>Conclusion</h2>
+<p class="has-line-data" data-line-start="117" data-line-end="118">Nomad is the perfect tool for the simple engineer to abuse any stranded compute power with zero configuration and maximum profit.</p>
+<p class="has-line-data" data-line-start="119" data-line-end="120">It is simple but extensive and easy enough to manage even when you don’t have a DevOps team to back you up.</p>
+<p class="has-line-data" data-line-start="121" data-line-end="122">From my experience Nomad first 5 hours are pretty harsh since it lacks in documentation and examples (which got a lot better since I have started using it). After the initial investment you feel like it is the last cloud platform you want to use and the best that is currently out there.</p>
+</body></html>

@@ -4,3 +4,9 @@ add basic info to my page
 - hobbies
 - video games i played
 - intrests
+
+to run just copy
+
+```
+python -m http.server 8000
+```
