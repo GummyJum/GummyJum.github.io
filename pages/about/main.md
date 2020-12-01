@@ -11,9 +11,7 @@ I am an engineer with the following intrests (from oldest to newest):
 - Signal Processing
 - Distributed Computing
 - Climbing
-- Robotics
-- Gardening
 
 # 2020
 
-[Rogue Cloud With Nomad](?page=nomad)
+[01/12/2020 Rogue Cloud With Nomad](?page=nomad)
