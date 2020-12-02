@@ -1,0 +1,217 @@
+
+<style>
+  #game {
+    display: block;
+    margin: auto;
+    border: solid;
+    cursor: none;
+    left: 0;
+    width: 100%;
+    height: 600px;
+    /* max-height: 600px; */
+  }
+  #gameover {
+    display: block;
+    font-family: title-font;
+    color: #752d2d;
+    text-shadow: 2px 2px 0 #bcbcbc, 4px 4px 0 #9c9c9c;
+    top: 20%;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    font-size: 600%;
+  }
+</style>
+
+<div id="gameover">Game Over</div>
+<canvas id="game"></canvas>
+<div id="curtime">
+  Time: 0 seconds
+</div>
+<!-- <div id="highscoreboard">
+  <h1>High Scores:</h1>
+</div> -->
+<script>
+
+  // first handle high scores
+  function update_high_scores() {
+  }
+  //python -m http.server --directory .
+  /* first i need the following tools:
+    - keys\mouse bindings
+    - function that draws squares
+    - animation loop
+    - 2d camera transformation
+    - camera transfomation from key bindings
+    - function that checks squares collisions
+
+    the initial version of the game goes like this-
+    - the player is a square in 2d plane with a lot of other random squares
+    - the player moves toward the squares in an increasing velocity (like the dinasoar game in chrome browser)
+    - the player can move up/down/left/right
+
+    now the final touch, with all the fun:
+    - add effects and levels
+      - level one increase velocity
+      - level two add shape change
+      - level three add rotations
+    - add clear-bombs
+    - add scoreboard
+    - change to tetris cubes
+  */
+
+  var square_height = 25;
+  var square_width = 25;
+
+  var params = {time_for_new_square: 200, time_for_new_square_diff: 5, min_time_for_new_square: 50, 
+                square_acc: 20, square_velocity: 100, max_square_velocity: 1000};
+  var orig_params = {};
+  Object.assign(orig_params, params);
+
+  var canvas = document.getElementById('game');
+  var gameover = document.getElementById('gameover');
+  gameover.style.visibility = 'hidden';
+  var screen_height = canvas.offsetHeight;
+  var screen_width = canvas.offsetWidth;
+  canvas.height = screen_height;
+  canvas.width = screen_width;
+  
+  var num_of_squares = 50;
+  var squares = []; // each has x, y, w, h
+  var player = {x:0, y:0, w:50, h:50, color: 'gray', line_color: 'black'};
+  var mousepos = {x:0, y:0};
+
+  function draw_sqaure(ctx, x){
+    ctx.fillStyle = x.color;
+    ctx.fillRect(x.x, x.y, x.w, x.h);
+  }
+
+  function check_collision(r) {
+    for(var i = 0; i < squares.length; i++)
+      if (((squares[i].x >= r.x && squares[i].x - r.x <= r.w) ||
+            (squares[i].x <= r.x && r.x - squares[i].x <= squares[i].w)) &&
+          ((squares[i].y >= r.y && squares[i].y - r.y <= r.h) ||
+          (squares[i].y <= r.y && r.y - squares[i].y <= squares[i].h)))
+          return true;
+    return false;
+  }
+
+  var square_colors = ['blue', 'red', 'green', 'purple', 'brown', 'cyan'];
+  function generate_square() {
+    var color_ind = Math.floor(Math.random() * square_colors.length);
+    var x = Math.floor(Math.random() * (screen_width - square_width));
+    var counter = 0;
+    while (check_collision({x: x, y: 0, w:square_width, h:square_height})) {
+        x = Math.floor(Math.random() * (screen_width - square_width));
+        counter ++;
+        if (counter > 100)
+          return;
+    }
+    squares.push({x: x, y: 0, w:square_width, h:square_height, color: square_colors[color_ind], line_color: 'black', vx:0, vy:0})
+  }
+
+  function getmousepos(e) {
+    var r = canvas.getBoundingClientRect();
+    mousepos.x = e.clientX - r.left;
+    mousepos.y = e.clientY - r.top;  
+    player.x = mousepos.x - player.w / 2;
+    player.y = mousepos.y - player.h / 2; 
+  }    
+  canvas.addEventListener('mousemove', getmousepos);
+
+  function move_draw_and_filter_squares(ctx, delta) {
+    params.square_velocity += params.square_acc * delta / 1000;
+    if (params.square_velocity > params.max_square_velocity)
+      params.square_velocity = params.max_square_velocity;
+
+    params.time_for_new_square -= params.time_for_new_square_diff * delta / 1000;
+    if (params.time_for_new_square < params.min_time_for_new_square)
+      params.time_for_new_square = params.min_time_for_new_square;
+
+    var ok_squares = [];
+    for(var i = 0; i < squares.length; i++) {
+      // first advance the square
+      squares[i].x += squares[i].vx * delta / 1000;
+      squares[i].y += squares[i].vy * delta / 1000;
+      squares[i].y += params.square_velocity * delta / 1000;
+      if (squares[i].y < screen_height)
+        ok_squares.push(squares[i]);
+      // then draw the square
+      draw_sqaure(ctx, squares[i]);
+    }
+    squares = ok_squares;
+  }
+
+  var last_t = 0;
+  var last_square = 0;
+  var restart = false;
+  var t0 = 0;
+  function draw(t) {    
+
+    // retrieve some metadata
+    var ctx = document.getElementById('game').getContext('2d');
+    var delta = t - last_t; 
+    last_t = t;
+
+    // the animation loop      
+    if (restart) {
+      if (gameover.style.visibility === 'visible'){ 
+        window.requestAnimationFrame(draw);
+        return;
+      }
+      squares = [];
+      Object.assign(params, orig_params);
+      delta = 0;
+      last_square = t;
+      restart = false;
+      t0 = 0;
+    }
+
+    // update time
+    t0 += delta;
+    $('#curtime').text('Time: ' + Math.round(t0 / 1000, 2) + ' seconds');
+
+    // clear canvas
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.clearRect(0, 0, screen_width, screen_height); 
+
+    while (t - last_square > params.time_for_new_square) {
+      generate_square();
+      last_square += params.time_for_new_square; 
+    }
+
+    if (check_collision(player)) {
+      gameover.style.visibility = 'visible';
+      restart = true;
+    }
+
+    draw_sqaure(ctx, player);
+    move_draw_and_filter_squares(ctx, delta);
+
+    window.requestAnimationFrame(draw);
+  }
+  window.requestAnimationFrame(draw);
+
+  // key bindings
+  $(document).bind("keydown",function(e) {
+      var originator = e.keyCode || e.which;
+
+      if(originator == 38) //arrow up
+        player.vy = -5;
+      if(originator == 40) //arrow down
+        player.vy = 5;
+      if(originator == 37) //arrow left
+        player.vx = -5;
+      if(originator == 39) //arrow right
+        player.vx = 5;
+      if(originator == 65) //debug 1 a
+        generate_square();
+      if(originator == 83) //debug 2 s
+        alert('s');
+      if(originator == 68) //debug 3 d
+        alert('d');
+      if(originator == 13){          
+        gameover.style.visibility = 'hidden';
+      }
+  });
+</script>
