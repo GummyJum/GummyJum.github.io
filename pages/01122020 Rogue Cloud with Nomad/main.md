@@ -15,7 +15,7 @@ Since using Linux for distributed computing has widespread documentation but man
 
 1. Nomad single binary.
 2. Rusty servers / workstations with remote access means. 
-3. Understanding that you are responsible for your own actions and the ideas presented here are for educational purpose only.
+3. Understanding that you are responsible for your own actions and the ideas presented here are for educational purposes only.
 
 ![](i_am_a_man_of_simple_things.jpeg)
 
@@ -120,3 +120,5 @@ Nomad is the perfect tool for the simple engineer to abuse any stranded compute 
 It is simple but extensive and easy enough to manage even when you don't have a DevOps team to back you up.
 
 My motivation for writing this sales pitch for Nomad is that my initial experience with Nomad that was harsh for its lack in documentation and examples at the time (which got a lot better since then). After the initial frustration I felt like it is the single best cloud platform that is currently out there for the rebel engineer.
+
+> This article was published on [medium](https://medium.com/@gumjum.o.o/rogue-cloud-with-nomad-41963b4b82ba).
