@@ -27,15 +27,13 @@
   margin-bottom: 0;
 
   a {
-    /* color: inherit; */
-	/* color: rgb(87, 29, 105); */
     text-decoration: none;
   }
 
   small {
     font-weight: 400;
     opacity: 0.75;
-	font-family: text-font;
+    font-family: var(--code-font);
   }
 }
 
