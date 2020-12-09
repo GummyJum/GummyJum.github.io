@@ -1,0 +1,66 @@
+@font-face {
+  font-family: text-font;
+  /* src: url(fonts/cafeandbrewery.ttf); */
+  src: url(fonts/VanillaExtractRegular.ttf);
+}
+@font-face {
+  font-family: title-font;
+  /* src: url(fonts/orange\ juice\ 2.0.ttf); */
+  src: url(fonts/VCR_OSD_MONO.ttf);
+}
+
+.topnav {
+  background-color: rgb(87, 29, 105);
+  overflow: hidden;
+}
+
+.topnav a {
+	/* box-shadow:inset 0px 1px 0px 0px #a0729a; */
+	/* background-color:#eec0cf; */
+	/* border:1px solid #575748; */
+  float: left;
+	color:#ffffff;
+  text-align: center;
+  padding: 4px;
+  text-decoration: none;
+  font-size: 200%;
+  /* font-weight: bold; */
+  font-family: title-font;
+}
+
+code {
+  display: block;
+  background-color:#4f4e52;
+  font-size: 100%;
+}
+
+a {
+	/* display:inline; */
+	/* cursor:pointer; */
+	color:#3ba5cf;
+	/* font-family:Arial; */
+	font-weight: bolder;
+  text-decoration:none;  
+}
+  
+#content {  
+  max-width: 800px;
+  margin: auto;
+  font-size: 100%;
+}
+
+#logo{
+  display: block;
+  margin: auto;
+  padding: 1%;
+  max-width: 250px;
+}
+
+body {
+  font-weight: normal;
+  font-family: text-font; 
+  /* , "Helvetica Neue", Helvetica, Arial; */
+	background-color: rgb(15, 14, 14);
+  color: rgb(255, 255, 255);  
+  -webkit-text-size-adjust: 100%;
+}
