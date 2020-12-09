@@ -2,29 +2,46 @@
 //
 // Super small header above the content for site name and short description.
 
+@font-face {
+  font-family: title-font;
+  src: url(assets/VCR_OSD_MONO.ttf);
+}
+
+@font-face {
+  font-family: text-font;
+  src: url(assets/VanillaExtractRegular.ttf);
+}
+
 .masthead {
   padding-top: var(--spacer);
   padding-bottom: var(--spacer);
   margin-bottom: var(--spacer-3);
 }
 
+.gameify{
+	font-family: title-font;
+	font-size: 150%;
+}
+
 .masthead-title {
   margin-bottom: 0;
 
   a {
-    color: inherit;
+    /* color: inherit; */
+	/* color: rgb(87, 29, 105); */
     text-decoration: none;
   }
 
   small {
     font-weight: 400;
-    opacity: 0.5;
+    opacity: 0.75;
+	font-family: text-font;
   }
 }
 
 // Navbar styles
 .nav {
-  float: right;
-  line-height: 1.25rem;
-  word-spacing: 1rem;
+	float: right;
+	line-height: 1.25rem;
+	word-spacing: 1rem;
 }
