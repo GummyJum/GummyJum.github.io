@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-This is a place for me to store current projects, repair broken dreams and create future noise.
+This is a place for me to store and review projects.
 
 I have the following interests (from the oldest to the newest):
 
