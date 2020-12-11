@@ -70,8 +70,6 @@ Press enter to restart
     - change to tetris cubes
   */
 
-  var square_height = 25;
-  var square_width = 25;
 
   var params = {time_for_new_square: 200, time_for_new_square_diff: 5, min_time_for_new_square: 50, 
                 square_acc: 20, square_velocity: 100, max_square_velocity: 1000};
@@ -83,12 +81,16 @@ Press enter to restart
   gameover.style.visibility = 'hidden';
   var screen_height = canvas.offsetHeight;
   var screen_width = canvas.offsetWidth;
+
+  var square_width = screen_width / 50;
+  var square_height = square_width;
+
   canvas.height = screen_height;
   canvas.width = screen_width;
   
   var num_of_squares = 50;
   var squares = []; // each has x, y, w, h
-  var player = {x:0, y:0, w:50, h:50, color: 'gray', line_color: 'black'};
+  var player = {x:0, y:0, w:screen_width/25, h:screen_width/25, color: 'gray', line_color: 'black'};
   var mousepos = {x:0, y:0};
 
   function draw_sqaure(ctx, x){
@@ -120,6 +122,14 @@ Press enter to restart
     squares.push({x: x, y: 0, w:square_width, h:square_height, color: square_colors[color_ind], line_color: 'black', vx:0, vy:0})
   }
 
+  function gettouchpos(e) {
+    var r = canvas.getBoundingClientRect();
+    mousepos.x = e.touches[0].clientX - r.left;
+    mousepos.y = e.touches[0].clientY - r.top;  
+    player.x = mousepos.x - player.w / 2;
+    player.y = mousepos.y - player.h / 2; 
+  }    
+
   function getmousepos(e) {
     var r = canvas.getBoundingClientRect();
     mousepos.x = e.clientX - r.left;
@@ -127,7 +137,14 @@ Press enter to restart
     player.x = mousepos.x - player.w / 2;
     player.y = mousepos.y - player.h / 2; 
   }    
+
+  function gettouchstart(e) {
+    gameover.style.visibility = 'hidden';
+  }
+  
   canvas.addEventListener('mousemove', getmousepos);
+  canvas.addEventListener('touchmove', gettouchpos);
+  canvas.addEventListener('touchstart', gettouchstart);
 
   function move_draw_and_filter_squares(ctx, delta) {
     params.square_velocity += params.square_acc * delta / 1000;
