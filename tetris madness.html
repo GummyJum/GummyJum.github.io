@@ -1,44 +1,35 @@
 ---
-layout: page
+<!-- layout: page -->
 title: Tetris Madness
 permalink: /tetris/
 ---
-
 <script src="/jquery-3.5.1.min.js"></script>
 <style>
+  @font-face {
+  font-family: 'game-font';
+    src: url('/assets/VCR_OSD_MONO.ttf');
+  }
+
+  .test {
+    visibility: hidden;
+    font-family: 'game-font';
+  }
   #game {
     display: block;
     margin: auto;
     border: solid;
     cursor: none;
     left: 0;
-    width: 100%;
-    height: 600px;
+    width: 80vw;
+    height: 95vh;
     touch-action: none;
+    font-family: 'game-font';
     /* max-height: 600px; */
-  }
-  #gameover {
-    display: block;
-    font-family: title-font;
-    color: #752d2d;
-    text-shadow: 2px 2px 0 #bcbcbc, 4px 4px 0 #9c9c9c;
-    top: 20%;
-    width: 100%;
-    margin: auto;
-    text-align: center;
-    font-size: 600%;
   }
 </style>
 
-<div id="gameover">Game Over</div>
-<h3>
-Press enter to restart
-</h3>
 <canvas id="game"></canvas>
-<div id="curtime">
-  Time: 0 seconds
-</div>
-
+<div class="test">test</div>
 <!-- <div id="highscoreboard">
   <h1>High Scores:</h1>
 </div> -->
@@ -70,6 +61,7 @@ Press enter to restart
     - add scoreboard
     - change to tetris cubes
   */
+  document.body.style.backgroundColor = "rgb(49, 49, 49)";
 
 
   var params = {time_for_new_square: 200, time_for_new_square_diff: 5, min_time_for_new_square: 50, 
@@ -78,8 +70,8 @@ Press enter to restart
   Object.assign(orig_params, params);
 
   var canvas = document.getElementById('game');
-  var gameover = document.getElementById('gameover');
-  gameover.style.visibility = 'hidden';
+  var gameover = false;
+
   var screen_height = canvas.offsetHeight;
   var screen_width = canvas.offsetWidth;
 
@@ -97,6 +89,28 @@ Press enter to restart
   function draw_sqaure(ctx, x){
     ctx.fillStyle = x.color;
     ctx.fillRect(x.x, x.y, x.w, x.h);
+  }
+
+  function display_gameover(ctx){    
+    ctx.save();
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#752d2d";
+    
+    ctx.font = '100px "game-font"';
+    ctx.fillText('Game Over', screen_width/2, screen_height/2);
+    ctx.font = '75px "game-font"';
+    ctx.fillText('Enter / Touch to restart', screen_width/2, screen_height/2 + 200);
+
+    ctx.shadowColor="white";    
+    ctx.shadowBlur = 3;
+
+    ctx.font = '100px "game-font"';
+    ctx.fillText('Game Over', screen_width/2, screen_height/2);
+    ctx.font = '75px "game-font"';
+    ctx.fillText('Enter / Touch to restart', screen_width/2, screen_height/2 + 200);
+
+    ctx.restore()
   }
 
   function check_collision(r) {
@@ -140,7 +154,7 @@ Press enter to restart
   }    
 
   function gettouchstart(e) {
-    gameover.style.visibility = 'hidden';
+    gameover = false;
   }
   
   canvas.addEventListener('mousemove', getmousepos);
@@ -183,7 +197,7 @@ Press enter to restart
 
     // the animation loop      
     if (restart) {
-      if (gameover.style.visibility === 'visible'){ 
+      if (gameover){ 
         window.requestAnimationFrame(draw);
         return;
       }
@@ -209,8 +223,9 @@ Press enter to restart
     }
 
     if (check_collision(player)) {
-      gameover.style.visibility = 'visible';
+      gameover = true;
       restart = true;
+      display_gameover(ctx);
     }
 
     draw_sqaure(ctx, player);
@@ -218,7 +233,6 @@ Press enter to restart
 
     window.requestAnimationFrame(draw);
   }
-  window.requestAnimationFrame(draw);
 
   // key bindings
   $(document).bind("keydown",function(e) {
@@ -238,8 +252,12 @@ Press enter to restart
         alert('s');
       if(originator == 68) //debug 3 d
         alert('d');
-      if(originator == 13){          
-        gameover.style.visibility = 'hidden';
+      if(originator == 13){    
+        console.log('[INFO] game restart cur gameover:' + gameover);      
+        gameover = false;
       }
   });
+
+  
+  window.requestAnimationFrame(draw);
 </script>
