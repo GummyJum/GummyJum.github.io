@@ -14,6 +14,6 @@ The results were conclusive the overhead was significant and reached an order of
 
 Still, Wasm was surprisingly efficient and comparable to the native implementation for few programs.
 
-There are many applications that can benefit from using Wasm and I feel that this project won't be the last Wasm project I will work on.
+There are many applications that can benefit from using Wasm and I feel this won't be my last Wasm project.
 
 [The code along with detailed results can be accessed via GitHub](https://github.com/GummyJum/wasm_benchmark).
