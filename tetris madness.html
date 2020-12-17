@@ -29,7 +29,9 @@ permalink: /tetris/
 </style>
 
 <canvas id="game"></canvas>
-<div class="test">test</div>
+
+<!-- the test div for loading the game font otherwise it won't cache -->
+<div class="test">test</div> 
 <!-- <div id="highscoreboard">
   <h1>High Scores:</h1>
 </div> -->
@@ -66,8 +68,6 @@ permalink: /tetris/
 
   var params = {time_for_new_square: 200, time_for_new_square_diff: 5, min_time_for_new_square: 50, 
                 square_acc: 20, square_velocity: 100, max_square_velocity: 1000};
-  var orig_params = {};
-  Object.assign(orig_params, params);
 
   var canvas = document.getElementById('game');
   var gameover = false;
@@ -81,14 +81,32 @@ permalink: /tetris/
   canvas.height = screen_height;
   canvas.width = screen_width;
   
-  var num_of_squares = 50;
+  var num_of_squares = 0.5 * screen_width / square_width; // we want constant number of squares per width pixels
+  params.min_time_for_new_square = 1000 / num_of_squares;
+  params.time_for_new_square = params.min_time_for_new_square * 2;
+  params.max_square_velocity = screen_height / square_height * 5;
+  params.square_velocity = params.max_square_velocity / 5;
+
   var squares = []; // each has x, y, w, h
   var player = {x:0, y:0, w:screen_width/25, h:screen_width/25, color: 'gray', line_color: 'black'};
   var mousepos = {x:0, y:0};
 
+  var orig_params = {};
+  Object.assign(orig_params, params);
+
   function draw_sqaure(ctx, x){
     ctx.fillStyle = x.color;
     ctx.fillRect(x.x, x.y, x.w, x.h);
+  }
+
+
+  function fit_font_to_canvas(ctx, text, percent, font) {
+    var font_size = 10;
+    ctx.font = '' + font_size + 'px ' + font;
+    while (ctx.measureText(text).width < ctx.canvas.width*percent) {
+      font_size ++;
+      ctx.font = '' + font_size + 'px ' + font;
+    }
   }
 
   function display_gameover(ctx){    
@@ -97,18 +115,18 @@ permalink: /tetris/
     ctx.textAlign = "center";
     ctx.fillStyle = "#752d2d";
     
-    ctx.font = '100px "game-font"';
+    fit_font_to_canvas(ctx, 'Game Over', 0.8, '"game-font"')
     ctx.fillText('Game Over', screen_width/2, screen_height/2);
-    ctx.font = '75px "game-font"';
-    ctx.fillText('Enter / Touch to restart', screen_width/2, screen_height/2 + 200);
-
     ctx.shadowColor="white";    
     ctx.shadowBlur = 3;
+    ctx.fillText('Game Over', screen_width/2, screen_height/2); 
 
-    ctx.font = '100px "game-font"';
-    ctx.fillText('Game Over', screen_width/2, screen_height/2);
-    ctx.font = '75px "game-font"';
-    ctx.fillText('Enter / Touch to restart', screen_width/2, screen_height/2 + 200);
+    ctx.shadowBlur = 0;
+    fit_font_to_canvas(ctx, 'Click to Restart', 0.5, '"game-font"')
+    ctx.fillText('Click to Restart', screen_width/2, screen_height/2 + 150);
+    ctx.shadowColor="white";    
+    ctx.shadowBlur = 3;
+    ctx.fillText('Click to Restart', screen_width/2, screen_height/2 + 150);
 
     ctx.restore()
   }
@@ -160,6 +178,7 @@ permalink: /tetris/
   canvas.addEventListener('mousemove', getmousepos);
   canvas.addEventListener('touchmove', gettouchpos);
   canvas.addEventListener('touchstart', gettouchstart);
+  canvas.addEventListener('click', gettouchstart)
 
   function move_draw_and_filter_squares(ctx, delta) {
     params.square_velocity += params.square_acc * delta / 1000;
@@ -234,30 +253,5 @@ permalink: /tetris/
     window.requestAnimationFrame(draw);
   }
 
-  // key bindings
-  $(document).bind("keydown",function(e) {
-      var originator = e.keyCode || e.which;
-
-      if(originator == 38) //arrow up
-        player.vy = -5;
-      if(originator == 40) //arrow down
-        player.vy = 5;
-      if(originator == 37) //arrow left
-        player.vx = -5;
-      if(originator == 39) //arrow right
-        player.vx = 5;
-      if(originator == 65) //debug 1 a
-        generate_square();
-      if(originator == 83) //debug 2 s
-        alert('s');
-      if(originator == 68) //debug 3 d
-        alert('d');
-      if(originator == 13){    
-        console.log('[INFO] game restart cur gameover:' + gameover);      
-        gameover = false;
-      }
-  });
-
-  
   window.requestAnimationFrame(draw);
 </script>
